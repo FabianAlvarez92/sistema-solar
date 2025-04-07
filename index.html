@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema Solar Web</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle, #0c0f29, #000000);
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const light = new THREE.PointLight(0xffffff, 2, 100);
+  light.position.set(0, 0, 0);
+  scene.add(light);
+
+  const loader = new THREE.TextureLoader();
+
+  let sun, earth, mars, saturn;
+  let angle = 0;
+
+  loader.load('https://upload.wikimedia.org/wikipedia/commons/3/3f/Sun_texture.jpg', function(texSun) {
+    const geo = new THREE.SphereGeometry(2, 32, 32);
+    const mat = new THREE.MeshBasicMaterial({ map: texSun });
+    sun = new THREE.Mesh(geo, mat);
+    scene.add(sun);
+  });
+
+  loader.load('https://upload.wikimedia.org/wikipedia/commons/c/cb/Earth_PNG_Clipart.png', function(texEarth) {
+    const geo = new THREE.SphereGeometry(0.5, 32, 32);
+    const mat = new THREE.MeshBasicMaterial({ map: texEarth, transparent: true });
+    earth = new THREE.Mesh(geo, mat);
+    scene.add(earth);
+  });
+
+  loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/600px-OSIRIS_Mars_true_color.jpg', function(texMars) {
+    const geo = new THREE.SphereGeometry(0.4, 32, 32);
+    const mat = new THREE.MeshBasicMaterial({ map: texMars });
+    mars = new THREE.Mesh(geo, mat);
+    scene.add(mars);
+  });
+
+  loader.load('https://upload.wikimedia.org/wikipedia/commons/7/74/Saturn_by_Cassini_Huygens.png', function(texSaturn) {
+    const geo = new THREE.SphereGeometry(0.7, 32, 32);
+    const mat = new THREE.MeshBasicMaterial({ map: texSaturn, transparent: true });
+    saturn = new THREE.Mesh(geo, mat);
+    scene.add(saturn);
+  });
+
+  camera.position.z = 15;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    angle += 0.01;
+
+    if (earth) {
+      earth.position.x = Math.cos(angle) * 5;
+      earth.position.z = Math.sin(angle) * 5;
+      earth.rotation.y += 0.01;
+    }
+
+    if (mars) {
+      mars.position.x = Math.cos(angle * 0.8) * 7;
+      mars.position.z = Math.sin(angle * 0.8) * 7;
+      mars.rotation.y += 0.008;
+    }
+
+    if (saturn) {
+      saturn.position.x = Math.cos(angle * 0.5) * 10;
+      saturn.position.z = Math.sin(angle * 0.5) * 10;
+      saturn.rotation.y += 0.005;
+    }
+
+    if (sun) {
+      sun.rotation.y += 0.002;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+</script>
+</body>
+</html>
